@@ -40,7 +40,7 @@ btnStringify.onclick = function () {
         , numberType2: Number("45")
     }
 
-    var stringifyObjectResult = stringifyObject(simpleObj);
+    var stringifyObjectResult = stringify(simpleObj);
     var JSONStringifyResult = JSON.stringify(simpleObj);
 
     lblResult.innerText = stringifyObjectResult;
@@ -56,57 +56,42 @@ btnStringify.onclick = function () {
 }
 
 /**
- * Converts a JavaScript object into a JSON string.
+ * Serializes a JavaScript value as a JSON string.
+ * 
+ * The value `undefined` is returned when there is no JSON representation for the value.
  *
- * @param {Object} obj - JavaScript object to be converted.
- * @returns A string in JSON format representing the original JavaScript object.
+ * @param {*} value - The JavaScript value.
+ * @return {string|undefined} A JSON string or `undefined`.
  */
-function stringifyObject(obj) {
-    // Checks if the object is an array
-    var isArray = obj instanceof Array;
-
-    var stringified = "";
-
-    // Iterate through all the properties of the object
-    for (var property in obj) {
-        // Checks if the property exists in the object, now using the protected method :)
-        if (!Object.prototype.hasOwnProperty.call(obj, property)) continue;
-
-        // Converts the object into a stringifiable object
-        var value = flattenObject(obj[property]);
-        if (value !== undefined) {
-            stringified += concatProperty(isArray, property, value);
-        }
-    }
-    // Encloses the object in {} or [] according to it's type and removes unecesseary commas
-    return encloseAndCleanString(stringified, isArray);
-}
-
-/**
- * Flattens an object converting it to a valid string according to it's object type.
- *
- * @param {Object} obj - Object containing the value.
- * @returns A valid object to be stringidfied, or undefined if the object is not valid.
- */
-function flattenObject(obj) {
+function stringify(value) {
     // JS primitive values reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
-    switch (typeof obj) {
+    switch (typeof value) {
         case "string":
-            return addQuotes(obj);
+            return stringifyString(value);
+
         case "boolean":
         case "number":
-            return obj.toString(); //Converts the object to a string.
+            return value.toString(); //Converts the object to a string.
+
         case "object":
-            if (obj === null) return String(obj); // Casts the object to a string, same as -> "" + obj;
-            if (typeof obj.toJSON === "function") {
+            if (value === null) return String(value); // Casts the object to a string, same as -> "" + obj;
+            
+            if (typeof value.toJSON === "function") {
                 // This handles Dates and other custom classes with toJSON function, in other words converts the obj
                 // into a stringifiable object
-                return flattenObject(obj.toJSON());
+                return stringify(value.toJSON());
             }
-            if (typeof obj.valueOf === "function" && isPrimitiveType(obj.valueOf())) {
-                return flattenObject(obj.valueOf());
+
+            if(value instanceof Object) {
+                var value2 = value.valueOf();
+                // Was a distinct, more primitve value returned? 
+                if(value2 !== value) {
+                    return stringify(value2);
+                }
             }
-            return stringifyObject(obj);
+            
+            return stringifyObject(value);
+
         case "undefined":
         case "function":
         default:
@@ -114,59 +99,79 @@ function flattenObject(obj) {
     }
 }
 
-function isPrimitiveType(obj) {
-    return typeof obj === "string" || typeof obj === "boolean" || typeof obj === "number";
+
+var O_hasOwn = Object.prototype.hasOwnProperty;
+
+/**
+ * Converts a JavaScript object into a JSON string.
+ *
+ * @param {object} obj - JavaScript object to be converted.
+ * @return {string} A string in JSON format representing the original JavaScript object.
+ */
+function stringifyObject(obj) {
+    // Checks if the object is an array.
+    var isArray = obj instanceof Array;
+
+    var props = [];
+
+    // Iterate through all the properties of the object.
+    for (var property in obj) {
+        // Checks if the property exists in the object, now using the protected method :)
+        if (!O_hasOwn.call(obj, property)) continue;
+
+        // Converts the property value to a JSON string.
+        var value = stringify(obj[property]);
+        if (value !== undefined) {
+            props.push(concatProperty(isArray, property, value));
+        }
+    }
+
+    // Encloses the object in {} or [] according to it's type.
+    return encloseObject(props.join(","), isArray);
+}
+
+/**
+ * Serializes a given JavaScript string as a JSON string.
+ *
+ * @param {string} value - The string to serialize.
+ * 
+ * @return {string} The JSON string.
+ */
+function stringifyString(value) {
+    return "\"" + value + "\"";
 }
 
 /********************
  * Utility functions
  ********************/
-/**
- * Encloses the received value in quotes.
- *
- * @param {value} value The value that we want to enclose in quotes.
- * @returns The received value enclosed in quotes.
- */
-function addQuotes(value) {
-    return "\"" + value + "\"";
-}
 
 /**
  * Concatenates the property and value. If it's an array the property is discarded.
  *
- * @param {boolean} isArray Flag informing if it's an array.
- * @param {string} property Name of the property.
- * @param {Object} value Object with the value.
- * @returns The concatenated string in the following format "PropertyName: Value"
+ * Returns a string with the format `"PropertyName: Value"`.
+ * 
+ * @param {boolean} isArray - Indicates if it is an array property.
+ * @param {string} property - The name of the property.
+ * @param {string} value - The JSON serialization of the value.
+ * 
+ * @return {string} The concatenated property and value.
  */
 function concatProperty(isArray, property, value) {
-    return (!isArray ? addQuotes(property) + ":" : "") + value + ",";
+    return (!isArray ? stringifyString(property) + ":" : "") + value;
 }
 
 /**
- * Removes the last character in the string if it's a match to the one received.
+ * Encloses the JSON contents of an object.
  *
- * @param {string} str Value where we want to remove a character from.
- * @param {string} char Character that we want to remove from the string.
- * @returns The same string but with the last character removed in case it's a match to the one received.
+ * @param {string} str - The object's contents as a JSON string.
+ * @param {boolean} isArray - Indicates if the object is an array.
+ * 
+ * @return {string} The enclosed object.
  */
-function removeLastMatchingCharacter(str, char) {
-    if (str.slice(str.length - 1) === char) {
-        return str.slice(0, str.length - 1);
-    }
-    return str;
-}
+function encloseObject(str, isArray) {
 
-/**
- * Encloses the value in [] or {} depending on if it's an Array or an Object.
- *
- * @param {string} str Value to be enclosed.
- * @param {boolean} isArray Flag informing if the object is an array.
- * @returns The string enclosed in adequate characters.
- */
-function encloseAndCleanString(str, isArray) {
     var openningChar = isArray ? "[" : "{";
     var closingChar = isArray ? "]" : "}";
 
-    return openningChar + removeLastMatchingCharacter(str, ",") + closingChar;
+    return openningChar + str + closingChar;
 }
