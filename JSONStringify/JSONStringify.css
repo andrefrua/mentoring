@@ -1,0 +1,10 @@
+pre {
+  min-height: 100px;
+}
+
+.correct{
+  color: green;
+}
+.incorrect{
+  color: red;
+}

@@ -1,0 +1,40 @@
+<html>
+
+<head>
+	<title>JSON Stringify</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="JSONStringify.css">
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h1>JSON Stringify</h1>
+		<div class="row">
+			<div class="col-sm-12">
+				Simples
+				<pre id="lblResult"></pre>
+				<hr />
+				JSON.stringify:
+				<pre id="lblResultJSONStringify"></pre>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<button id="btnStringify" class="btn btn-primary">
+					Stringify
+				</button>
+			</div>
+			<div class="col-sm-6 text-right">
+				Conversion status:
+				<label id="lblStatus"></label>
+			</div>
+		</div>
+	</div>
+	<script src="JSONStringify.js"></script>
+</body>
+
+</html>
