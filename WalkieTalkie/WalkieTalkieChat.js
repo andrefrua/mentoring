@@ -1,95 +1,95 @@
-// Controls
-var btnUser1Walkie1Talk = document.getElementById("btnUser1Walkie1Talk");
-var btnUser2Walkie1Talk = document.getElementById("btnUser2Walkie1Talk");
-var btnUser3Walkie1Talk = document.getElementById("btnUser3Walkie1Talk");
+var channelsList = [];
 
-var btnUser1Walkie1Listen = document.getElementById("btnUser1Walkie1Listen");
-var btnUser2Walkie1Listen = document.getElementById("btnUser2Walkie1Listen");
-var btnUser3Walkie1Listen = document.getElementById("btnUser3Walkie1Listen");
-
-var btnUser1Walkie2Talk = document.getElementById("btnUser1Walkie2Talk");
-var btnUser2Walkie2Talk = document.getElementById("btnUser2Walkie2Talk");
-var btnUser3Walkie2Talk = document.getElementById("btnUser3Walkie2Talk");
-
-var btnUser1Walkie2Listen = document.getElementById("btnUser1Walkie2Listen");
-var btnUser2Walkie2Listen = document.getElementById("btnUser2Walkie2Listen");
-var btnUser3Walkie2Listen = document.getElementById("btnUser3Walkie2Listen");
-
-var inputUser1 = document.getElementById("inputUser1");
-var inputUser2 = document.getElementById("inputUser2");
-var inputUser3 = document.getElementById("inputUser3");
-
-var preChat1 = document.getElementById("preChat1");
-var preChat2 = document.getElementById("preChat2");
-
-
-// Walkies
-var walkie1 = new walkietalkie();
-walkie1.createChannel("Channel 1");
-var walkie2 = new walkietalkie();
-walkie2.createChannel("Channel 2");
+const messageTypes = {
+  DEFAULT: "label-default",
+  INFO: "label-info",
+  WARNING: "label-warning",
+  ERROR: "label-danger",
+  SUCCESS: "label-success"
+}
 
 // User actions
-btnUser1Walkie1Talk.onclick = function () {
-  var username = "User 1";
-  addMessageAndUpdateChat(walkie1, username, inputUser1, preChat1);
+btnUser1Talk.onclick = function () {
+  addMessageToChannel("User 1", inputUser1);
 }
-btnUser2Walkie1Talk.onclick = function () {
-  var username = "User 2";
-  addMessageAndUpdateChat(walkie1, username, inputUser2, preChat1);
+btnUser2Talk.onclick = function () {
+  addMessageToChannel("User 2", inputUser2);
 }
-btnUser3Walkie1Talk.onclick = function () {
-  var username = "User 3";
-  addMessageAndUpdateChat(walkie1, username, inputUser3, preChat1);
+btnUser3Talk.onclick = function () {
+  addMessageToChannel("User 3", inputUser3);
 }
 
-btnUser1Walkie2Talk.onclick = function () {
-  var username = "User 1";
-  addMessageAndUpdateChat(walkie2, username, inputUser1, preChat2);
+btnUser1Listen.onclick = function () {
+  getLatestMessage();
 }
-btnUser2Walkie2Talk.onclick = function () {
-  var username = "User 2";
-  addMessageAndUpdateChat(walkie2, username, inputUser2, preChat2);
+btnUser2Listen.onclick = function () {
+  getLatestMessage();
 }
-btnUser3Walkie2Talk.onclick = function () {
-  var username = "User 3";
-  addMessageAndUpdateChat(walkie2, username, inputUser3, preChat2);
+btnUser3Listen.onclick = function () {
+  getLatestMessage();
 }
-
-btnUser1Walkie1Listen.onclick = function () {
-  alert(walkie1.getLatestMessage());
-}
-btnUser2Walkie1Listen.onclick = function () {
-  alert(walkie1.getLatestMessage());
-}
-btnUser3Walkie1Listen.onclick = function () {
-  alert(walkie1.getLatestMessage());
+btnCreateChannel.onclick = function () {
+  createChannel();
 }
 
-btnUser1Walkie2Listen.onclick = function () {
-  alert(walkie2.getLatestMessage());
-}
-btnUser2Walkie2Listen.onclick = function () {
-  alert(walkie2.getLatestMessage());
-}
-btnUser3Walkie2Listen.onclick = function () {
-  alert(walkie2.getLatestMessage());
-}
+// UTILS
+function createChannel() {
+  if (inputChannelName.value !== "") {
+    var newChannelName = inputChannelName.value;
+    var newWalkieChannel = new walkieTalkie();
+    if (newWalkieChannel) {
+      newWalkieChannel.setChannelName(newChannelName);
+      channelsList.push(newWalkieChannel);
+    }
+    // Adds the new channel to the select
+    var elOption = document.createElement("option");
+    elOption.textContent = newChannelName;
+    elOption.value = channelsList.length - 1; // -1 So that the value is the same as the index on the array
+    selectAvailableChannels.appendChild(elOption);
 
-
-
-
-
-
-
-
-
-// Utils
-function addMessageAndUpdateChat(walkie, username, inputMessage, chatElementToUpdate) {
-  walkie.addUserToChannel(username);
-  walkie.addMessage(inputMessage.value, username);
-  chatElementToUpdate.innerHTML = walkie.getChat(username);
-  inputMessage.value = "";
+    inputChannelName.value = "";
+    setInfo(messageTypes.SUCCESS, "Channel " + newChannelName + " was created.");
+  } else {
+    setInfo(messageTypes.WARNING, "You need to give a name to the channel!")
+  }
 }
 
+function addMessageToChannel(username, inputMessage) {
+  if (selectAvailableChannels.selectedIndex > -1) {
+    var channel = channelsList[parseInt(selectAvailableChannels.value)];
+    channel.addMessage(inputMessage.value, username);
+    preChannelChat.innerHTML = channel.getChat(username);
+    inputMessage.value = "";
+    setInfo(messageTypes.SUCCESS, "Message sent.");
+  } else {
+    setInfo(messageTypes.WARNING, "You need to select a channel in order to talk!");
+  }
+}
 
+function getLatestMessage() {
+  if (selectAvailableChannels.selectedIndex > -1) {
+    var channel = channelsList[parseInt(selectAvailableChannels.value)];
+    var latestMessage = channel.getLatestMessage();
+
+    if (latestMessage) {
+      message = "<b>" + latestMessage.username + ": </b>" + latestMessage.message;
+      setInfo(messageTypes.DEFAULT, message, true);
+    } else {
+      message = "No messages available"
+      setInfo(messageTypes.INFO, "You need to select a channel in order to talk!");
+    }
+  } else {
+    setInfo(messageTypes.WARNING, "You need to select a channel to listen to!");
+  }
+}
+
+function setInfo(type, text, isHtml) {
+  spanInfo.className = "label";
+  spanInfo.classList.add(type);
+  if (isHtml) {
+    spanInfo.innerHTML = text;
+  } else {
+    spanInfo.innerText = text;
+  }
+
+}

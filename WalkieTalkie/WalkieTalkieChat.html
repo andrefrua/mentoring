@@ -7,87 +7,88 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="WalkieTalkieChat.css">
 </head>
 
 <body>
-		<button id="btnRunTest" class="btn btn-error">
-				Run Test
-			</button>
 	<div class="container-fluid">
 		<h1>Walkie Talkie</h1>
+
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="row">
-					<div class="col-sm-12">
-						User 1 input:
-						<input id="inputUser1" type="text"></input>
-						<button id="btnUser1Walkie1Talk" class="btn btn-primary">
-							Walkie 1 Talk
+					<div class="col-sm-6">
+						New channel:
+						<input id="inputChannelName" type="text"></input>
+						<button id="btnCreateChannel" class="btn btn-primary">
+							Create
 						</button>
-						<button id="btnUser1Walkie1Listen" class="btn btn-primary">
-							Walkie 1 Listen
-						</button>
-						<button id="btnUser1Walkie2Talk" class="btn btn-success">
-							Walkie 2 Talk
-						</button>
-						<button id="btnUser1Walkie2Listen" class="btn btn-success">
-							Walkie 2 Listen
-						</button>
-						<hr />
+					</div>
+					<div class="col-sm-6">
+						<select id="selectAvailableChannels" class="width-100" size="10">
+						</select>
 					</div>
 				</div>
+				<hr />
 				<div class="row">
 					<div class="col-sm-12">
-						User 2 input:
-						<input id="inputUser2" type="text"></input>
-						<button id="btnUser2Walkie1Talk" class="btn btn-primary">
-							Walkie 1 Talk
-						</button>
-						<button id="btnUser2Walkie1Listen" class="btn btn-primary">
-							Walkie 1 Listen
-						</button>
-						<button id="btnUser2Walkie2Talk" class="btn btn-success">
-							Walkie 2 Talk
-						</button>
-						<button id="btnUser2Walkie2Listen" class="btn btn-success">
-							Walkie 2 Listen
-						</button>
-						<hr />
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-12">
-						User 3 input:
-						<input id="inputUser3" type="text"></input>
-						<button id="btnUser3Walkie1Talk" class="btn btn-primary">
-							Walkie 1 Talk
-						</button>
-						<button id="btnUser3Walkie1Listen" class="btn btn-primary">
-							Walkie 1 Listen
-						</button>
-						<button id="btnUser3Walkie2Talk" class="btn btn-success">
-							Walkie 2 Talk
-						</button>
-						<button id="btnUser3Walkie2Listen" class="btn btn-success">
-							Walkie 2 Listen
-						</button>
+
+						<div class="row form-group">
+							<div class="col-sm-12">
+								User 1 input:
+								<input id="inputUser1" type="text"></input>
+								<button id="btnUser1Talk" class="btn btn-primary">
+									Talk
+								</button>
+								<button id="btnUser1Listen" class="btn btn-primary">
+									Listen
+								</button>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div class="col-sm-12">
+								User 2 input:
+								<input id="inputUser2" type="text"></input>
+								<button id="btnUser2Talk" class="btn btn-primary">
+									Talk
+								</button>
+								<button id="btnUser2Listen" class="btn btn-primary">
+									Listen
+								</button>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div class="col-sm-12">
+								User 3 input:
+								<input id="inputUser3" type="text"></input>
+								<button id="btnUser3Talk" class="btn btn-primary">
+									Talk
+								</button>
+								<button id="btnUser3Listen" class="btn btn-primary">
+									Listen
+								</button>
+							</div>
+						</div>
+
+						<div class="row form-group">
+							<div class="col-sm-12">
+								<h3><span id="spanInfo" class="label label-default"></span></h3>
+								<!-- <h3><span class="label label-primary">Primary Label</span></h3>
+								<h3><span class="label label-success">Success Label</span></h3>
+								<h3><span class="label label-info">Info Label</span></h3>
+								<h3><span class="label label-warning">Warning Label</span></h3>
+								<h3><span class="label label-danger">Danger Label</span></h3> -->
+							</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="row">
-					<div class="col-sm-12">
-						Walkie 1
-						<pre id="preChat1"></pre>
-						<hr />
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-12">
-						Walkie 2
-						<pre id="preChat2"></pre>
-					</div>
-				</div>
+				Full chat on selected channel
+				<pre id="preChannelChat"></pre>
 			</div>
 		</div>
 	</div>
