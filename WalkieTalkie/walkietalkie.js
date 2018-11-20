@@ -1,17 +1,26 @@
-function walkieTalkie() {
-  this.channelName = "";
-  this.usersList = [];
-  this.chat = [];
+/**
+ * Walkie Talkie class definition
+ */
+var WalkieTalkie = class {
+  /**
+   * Constructor for the WalkieTalkie
+   * Here we need to set the channelName, usersList and chat
+   */
+  constructor() {
+    this.channelName = "";
+    this.usersList = [];
+    this.chat = [];
+  }
 
-  this.setChannelName = function (newName) {
+  setChannelName(newName) {
     this.channelName = newName;
   }
 
-  this.getChannelName = function () {
+  getChannelName() {
     return this.channelName;
   }
 
-  this.addUserToChannel = function (username) {
+  addUserToChannel(username) {
     if (this.usersList.includes(username)) {
       return "ALREADY_ADDED";
     }
@@ -19,7 +28,7 @@ function walkieTalkie() {
     return "ADDED";
   }
 
-  this.addMessage = function (newMessage, username) {
+  addMessage(newMessage, username) {
     if (!this.usersList.includes(username)) {
       return "INVALID_USER";
     }
@@ -27,12 +36,11 @@ function walkieTalkie() {
     return "MESSAGE_ADDED";
   }
 
-  this.getChat = function () {
+  getChat() {
     return this.chat;
   }
 
-  this.getLatestMessage = function (username) {
+  getLatestMessage(username) {
     return this.chat[this.chat.length - 1];
   }
-  return this;
 };

@@ -52,7 +52,7 @@ btnUser3Join.onclick = function () {
 function createChannel() {
   if (inputChannelName.value !== "") {
     var newChannelName = inputChannelName.value;
-    var newWalkieChannel = new walkieTalkie();
+    var newWalkieChannel = new WalkieTalkie();
     if (newWalkieChannel) {
       newWalkieChannel.setChannelName(newChannelName);
       channelsList.push(newWalkieChannel);
